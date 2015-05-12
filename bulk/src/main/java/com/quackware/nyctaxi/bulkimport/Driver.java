@@ -12,7 +12,6 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.util.GenericOptionsParser;
 
 // args[0] = inputPath
 // args[1] = outputPath
@@ -27,7 +26,7 @@ public class Driver {
     Configuration conf = HBaseConfiguration.create();
     conf.set("hbase.table.name", tableName);
 
-    Job job = new Job(conf, "NYCTaxiData bulk import");
+    Job job = new Job(conf, "NYCTaxi bulk import");
     job.setJarByClass(HBaseMapper.class);
 
     job.setMapperClass(HBaseMapper.class);
