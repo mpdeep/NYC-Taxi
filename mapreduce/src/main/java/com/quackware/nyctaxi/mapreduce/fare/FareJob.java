@@ -11,6 +11,8 @@ import org.apache.hadoop.hbase.mapreduce.TableMapReduceUtil;
 import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.hbase.util.Bytes;
+
 
 // args[0] = tableName
 public class FareJob {
@@ -27,7 +29,8 @@ public class FareJob {
     Scan scan = new Scan();
     scan.setCaching(500);
     scan.setCacheBlocks(false);
-
+    scan.addColumn(Bytes.toBytes("d"), Bytes.toBytes("f"));
+    scan.addColumn(Bytes.toBytes("d"), Bytes.toBytes("m"));
     TableMapReduceUtil.initTableMapperJob(tableName,
                                           scan,
                                           FareMapper.class, // mapper class
@@ -37,7 +40,7 @@ public class FareJob {
     TableMapReduceUtil.initTableReducerJob(tableName,
                                            FareReducer.class,
                                            job);
-    job.setNumReduceTasks(0);
+    job.setNumReduceTasks(1);
 
     job.waitForCompletion(true);
   }

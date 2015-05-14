@@ -31,7 +31,6 @@ public class FareMapper
     byte[] fareBytes = value.getValue(DATA_COL_FAM, Bytes.toBytes("f"));
     String medallion = Bytes.toString(medallionBytes);
     double fare = Bytes.toDouble(fareBytes);
-
     text.set(medallion);
     context.write(text, new DoubleWritable(fare));
   }

@@ -13,7 +13,7 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
-public class HBaseMapper extends 
+public class HBaseMapper extends
   Mapper<LongWritable, Text, ImmutableBytesWritable, KeyValue> {
 
   private String tableName = "";
@@ -38,7 +38,7 @@ public class HBaseMapper extends
   }
 
   @Override
-  protected void map(LongWritable key, Text value, Context context) 
+  protected void map(LongWritable key, Text value, Context context)
     throws IOException, InterruptedException {
     if (value.find("medallion") > -1) {
       // skip header
