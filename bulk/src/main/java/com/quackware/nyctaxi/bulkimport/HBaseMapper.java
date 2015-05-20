@@ -13,35 +13,23 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
-public class HBaseMapper extends
-  Mapper<LongWritable, Text, ImmutableBytesWritable, KeyValue> {
+public class HBaseMapper extends Mapper<LongWritable, Text, ImmutableBytesWritable, KeyValue> {
 
-  private String tableName = "";
-
-  final static byte[] COL_FAM = Bytes.toBytes("d");
-  final static byte[] MEDALLION_COL = Bytes.toBytes("m");
-  final static byte[] FARE_COL = Bytes.toBytes("f");
-  final static byte[] PICKUP_COL = Bytes.toBytes("p");
+  SimpleDateFormat dateFormat = new SimpleDateFormat("YYYY-MM-DD hh:mm:ss");
 
   ImmutableBytesWritable hKey = new ImmutableBytesWritable();
   KeyValue kv;
 
-  SimpleDateFormat dateFormat = new SimpleDateFormat("YYYY-MM-DD hh:mm:ss");
-
   @Override
-  protected void setup(Context context) throws IOException,
-      InterruptedException {
+  protected void setup(Context context) throws IOException, InterruptedException {
 
-    Configuration c = context.getConfiguration();
-
-    tableName = c.get("hbase.table.name");
   }
 
   @Override
   protected void map(LongWritable key, Text value, Context context)
     throws IOException, InterruptedException {
+
     if (value.find("medallion") > -1) {
-      // skip header
       return;
     }
 
@@ -49,16 +37,17 @@ public class HBaseMapper extends
     try {
       fields = value.toString().split(",");
     }
-    catch (Exception ex) {
-      System.out.println("Error parsing fields:" + ex.getMessage());
+    catch(Exception ex) {
+      System.out.println(ex.getMessage());
       return;
     }
 
     if (fields.length == 14) {
-      // Trip data
+      // trip data
+      String medallion = fields[0];
     }
     else if (fields.length == 11) {
-      // Fare data
+      // fare data
       String medallion = fields[0];
       String pickupString = fields[3];
       String fareAmount = fields[5];
@@ -67,36 +56,36 @@ public class HBaseMapper extends
         pickupDate = dateFormat.parse(pickupString);
       }
       catch (Exception ex) {
-        System.out.println("Error parsing date: " + ex.getMessage());
+        System.out.println(ex.getMessage());
         return;
       }
-      Long timestamp = pickupDate.getTime();
+
+      long timestamp = pickupDate.getTime();
 
       hKey.set(Bytes.toBytes(String.format("%s:%d", medallion, timestamp)));
 
-      // Medallion
       kv = new KeyValue(hKey.get(),
-                        COL_FAM,
-                        MEDALLION_COL,
+                        Bytes.toBytes("d"),
+                        Bytes.toBytes("m"),
                         timestamp,
                         Bytes.toBytes(medallion));
       context.write(hKey, kv);
 
-      // Fare
       kv = new KeyValue(hKey.get(),
-                        COL_FAM,
-                        FARE_COL,
+                        Bytes.toBytes("d"),
+                        Bytes.toBytes("f"),
                         timestamp,
                         Bytes.toBytes(fareAmount));
       context.write(hKey, kv);
 
-      // Pickup
       kv = new KeyValue(hKey.get(),
-                        COL_FAM,
-                        PICKUP_COL,
+                        Bytes.toBytes("d"),
+                        Bytes.toBytes("p"),
                         timestamp,
                         Bytes.toBytes(timestamp));
       context.write(hKey, kv);
+
     }
   }
+
 }

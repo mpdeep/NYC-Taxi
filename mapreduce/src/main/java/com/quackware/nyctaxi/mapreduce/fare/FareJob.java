@@ -17,7 +17,6 @@ import org.apache.hadoop.hbase.util.Bytes;
 // args[0] = tableName
 public class FareJob {
   public static void main(String[] args) throws Exception {
-
     String tableName = args[0];
 
     Configuration conf = HBaseConfiguration.create();
@@ -31,15 +30,17 @@ public class FareJob {
     scan.setCacheBlocks(false);
     scan.addColumn(Bytes.toBytes("d"), Bytes.toBytes("f"));
     scan.addColumn(Bytes.toBytes("d"), Bytes.toBytes("m"));
+
     TableMapReduceUtil.initTableMapperJob(tableName,
                                           scan,
-                                          FareMapper.class, // mapper class
-                                          Text.class, // mapper output key
-                                          DoubleWritable.class, // mapper output value
+                                          FareMapper.class,
+                                          Text.class,
+                                          DoubleWritable.class,
                                           job);
     TableMapReduceUtil.initTableReducerJob(tableName,
                                            FareReducer.class,
                                            job);
+
     job.setNumReduceTasks(1);
 
     job.waitForCompletion(true);

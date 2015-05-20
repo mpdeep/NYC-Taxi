@@ -18,7 +18,6 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 // args[2] = tableName
 public class Driver {
   public static void main(String[] args) throws Exception {
-
     Path inputPath = new Path(args[0]);
     Path outputPath = new Path(args[1]);
     String tableName = args[2];
@@ -26,7 +25,7 @@ public class Driver {
     Configuration conf = HBaseConfiguration.create();
     conf.set("hbase.table.name", tableName);
 
-    Job job = new Job(conf, "NYCTaxi bulk import");
+    Job job = new Job(conf, "NYCTaxi Bulk Import");
     job.setJarByClass(HBaseMapper.class);
 
     job.setMapperClass(HBaseMapper.class);

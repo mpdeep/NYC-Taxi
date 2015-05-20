@@ -19,19 +19,19 @@ import org.apache.hadoop.mapreduce.Job;
 public class FareMapper
   extends TableMapper<Text, DoubleWritable> {
 
-  final static byte[] DATA_COL_FAM = Bytes.toBytes("d");
-
   private Text text = new Text();
 
   @Override
   protected void map(ImmutableBytesWritable key, Result value, Context context)
     throws IOException, InterruptedException {
+      byte[] medallionBytes = value.getValue(Bytes.toBytes("d"), Bytes.toBytes("m"));
+      byte[] fareBytes = value.getValue(Bytes.toBytes("d"), Bytes.toBytes("f"));
 
-    byte[] medallionBytes = value.getValue(DATA_COL_FAM, Bytes.toBytes("m"));
-    byte[] fareBytes = value.getValue(DATA_COL_FAM, Bytes.toBytes("f"));
-    String medallion = Bytes.toString(medallionBytes);
-    double fare = Bytes.toDouble(fareBytes);
-    text.set(medallion);
-    context.write(text, new DoubleWritable(fare));
-  }
+      String medallion = Bytes.toString(medallionBytes);
+      String fareString = Bytes.toDouble(fareBytes);
+      double fare = Double.parseDouble(fareString);
+
+      text.set(medallion);
+      context.write(text, new DoubleWritable(fare));
+    }
 }
