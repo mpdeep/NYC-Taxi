@@ -19,7 +19,8 @@ public class FareJob {
   public static void main(String[] args) throws Exception {
     String tableName = args[0];
 
-    Configuration conf = HBaseConfiguration.create();
+    HBaseConfiguration conf = new HBaseConfiguration();
+    //Configuration conf = HBaseConfiguration.create();
     conf.set("hbase.table.name", tableName);
 
     Job job = new Job(conf, "NYCTaxi Fare Job");
