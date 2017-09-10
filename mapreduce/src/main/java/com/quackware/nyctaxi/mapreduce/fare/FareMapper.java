@@ -29,7 +29,7 @@ public class FareMapper
 
       String medallion = Bytes.toString(medallionBytes);
       //String fareString = Bytes.toDouble(fareBytes);
-      String fareString = "100"
+      String fareString = "100";
       double fare = Double.parseDouble(fareString);
 
       text.set(medallion);
